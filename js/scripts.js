@@ -256,6 +256,7 @@ map.addLayer({
 // listen for the mouse moving over the map and react when the cursor is over our data
 
 map.on('mousemove', function (e) {
+  
   // query for the features under the mouse, but only in the lots layer
   var features = map.queryRenderedFeatures(e.point, {
       layers: ['fill-geojson_gov_island'],
