@@ -1,10 +1,10 @@
 mapboxgl.accessToken = 'pk.eyJ1Ijoiam03MjE0IiwiYSI6ImNrNnNwdjFmYTBodTczbXF4bnJzaGR1Z2oifQ.Jl92KHVxrXt33RDS85IXAg';
 
+
   // we want to return to this point and zoom level after the user interacts
 // with the map, so store them in variables
-var initialCenterPoint = [-74.019054,40.688873]
-var initialZoom = 15.4
-
+var initialCenterPoint = [-74.032604,40.691017]
+var initialZoom = 14
 
 
 var initOptions ={
@@ -13,6 +13,8 @@ var initOptions ={
     center: initialCenterPoint, // starting position [lng, lat]
     zoom: initialZoom, // starting zoom
 }
+
+
 
 // a helper function for looking up colors and descriptions for NYC land use codes
 var StyleLookup = (code) => {
@@ -137,9 +139,9 @@ map.addControl(new mapboxgl.NavigationControl());
 map.on('style.load', function() {
 
 // add a geojson source to the map using our external geojson file
-map.addSource('geojson_gov_island', {
+map.addSource('NYH_Landmark_Geo', {
   type: 'geojson',
-  data: './data/geojson_gov_island.gpkg.geojson',
+  data: './data/NYH_Landmark_Geo.geojson',
 });
 
 // let's make sure the source got added by logging the current map state to the console
@@ -148,9 +150,9 @@ map.addSource('geojson_gov_island', {
 
 // add a layer for our custom source
 map.addLayer({
-  id: 'fill-geojson_gov_island',
+  id: 'fill-NYH_Landmark_Geo',
   type: 'fill',
-  source: 'geojson_gov_island',
+  source: 'NYH_Landmark_Geo',
   paint: {
       'fill-color': {
         type: 'categorical',
@@ -253,13 +255,64 @@ map.addLayer({
   }
 });
 
+// The 'building' layer in the mapbox-streets vector source contains building-height
+// data from OpenStreetMap.
+map.on('load', function() {
+// Insert the layer beneath any symbol layer.
+var layers = map.getStyle().layers;
+
+var labelLayerId;
+for (var i = 0; i < layers.length; i++) {
+if (layers[i].type === 'symbol' && layers[i].layout['text-field']) {
+labelLayerId = layers[i].id;
+break;
+}
+}
+
+map.addLayer(
+{
+'id': '3d-buildings',
+'source': 'composite',
+'source-layer': 'building',
+'filter': ['==', 'extrude', 'true'],
+'type': 'fill-extrusion',
+'minzoom': 15,
+'paint': {
+'fill-extrusion-color': '#aaa',
+
+// use an 'interpolate' expression to add a smooth transition effect to the
+// buildings as the user zooms in
+'fill-extrusion-height': [
+'interpolate',
+['linear'],
+['zoom'],
+15,
+0,
+15.05,
+['get', 'height']
+],
+'fill-extrusion-base': [
+'interpolate',
+['linear'],
+['zoom'],
+15,
+0,
+15.05,
+['get', 'min_height']
+],
+'fill-extrusion-opacity': 0.6
+}
+},
+labelLayerId
+);
+});
 // listen for the mouse moving over the map and react when the cursor is over our data
 
 map.on('mousemove', function (e) {
-  
+
   // query for the features under the mouse, but only in the lots layer
   var features = map.queryRenderedFeatures(e.point, {
-      layers: ['fill-geojson_gov_island'],
+      layers: ['fill-NYH_Landmark_Geo'],
   });
   // if the mouse pointer is over a feature on our layer of interest
   // take the data for that feature and display it in the sidebar
