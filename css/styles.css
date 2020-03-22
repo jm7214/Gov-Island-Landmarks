@@ -8,49 +8,10 @@ body { margin: 0;
       padding: 0;
 }
 
-header.masthead {
-  position: relative;
-  overflow: hidden;
-  padding-top: calc(7rem + 72px);
-  padding-bottom: 7rem;
-  background-color: #e9e3df;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-attachment: scroll;
-  background-size: cover;
-}
-
-header.masthead .masthead-content {
-  z-index: 1;
-  position: relative;
-}
-
-header.masthead .masthead-content .masthead-heading {
-  font-size: 4rem;
-}
-
-@media (min-width: 992px) {
-  header.masthead {
-    padding-top: calc(10rem + 55px);
-    padding-bottom: 10rem;
-  }
-  header.masthead .masthead-content .masthead-heading {
-    font-size: 6rem;
-  }
-
-  .bg-primary {
-    background-color: #e9e3df !important;
-  }
-
-  .btn-primary {
-    background-color: #ee0979;
-    border-color: #ee0979;
-  }
-
-
 
 #govisland-map {
-        position:absolute;
+        position: absolute;
+        top:0;
         bottom: 0;
         right: 0;
         left: 400px;
@@ -63,7 +24,7 @@ h3 {
 
 /*sidebar is fixed with and positioned to the left */
 #sidebar {
-            position: relative;
+            position: absolute;
             top: 0;
             left: 0;
             bottom: 0;
